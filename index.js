@@ -1,4 +1,4 @@
-const { TextCommand, RegexpCommand } = require("telegram-node-bot");
+const { TextCommand } = require("telegram-node-bot");
 const bot = require("./helpers/botConnection").get();
 
 const Start = require("./controllers/Start");

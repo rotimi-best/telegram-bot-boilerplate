@@ -11,4 +11,4 @@ Thanks to the Telegram team for the hard work.
 I love making bots that solves my day to day problems and telegram just had all it took to help me achieve this.
 
 # Goal of repo
-The goal of this boiler plate is to help me quickly get started with created a new bot idea that I have in minutes.
+The goal of this boiler plate is to help me quickly get started with creating any new bot idea in minutes.

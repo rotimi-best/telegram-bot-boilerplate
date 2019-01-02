@@ -1,0 +1,20 @@
+{
+  "name": "tourbot",
+  "version": "1.0.0",
+  "description": "Easy finder of tours around the world",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "bot",
+    "telegram"
+  ],
+  "author": "Rotimi Best",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^6.1.0",
+    "nodemon": "^1.18.6",
+    "telegram-node-bot": "^4.0.5"
+  }
+}

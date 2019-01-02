@@ -1,11 +1,12 @@
 const Telegram = require("telegram-node-bot");
 const TelegramBaseController = Telegram.TelegramBaseController;
-const { addUser, findUser } = require("../Db/user");
-const TodoController = require("./Todo");
-const todos = new TodoController();
+const { addUser, findUser } = require("../db/user");
 const {
-  sendToAdmin, emojis: { wave, thumbsUp, thumbsDown, ok }
+  sendToAdmin,
+  len,
+  emojis: { wave, thumbsUp, thumbsDown, ok }
 } = require("../modules");
+const { COMMANDS } = require("../helpers/constants");
 const Bot = require("../helpers/botConnection");
 const bot = Bot.get();
 
@@ -20,53 +21,18 @@ class StartController extends TelegramBaseController {
    * @param {Scope} $
    */
   async startHandler($) {
-    const scope = $;
     const telegramId = $.message.chat.id;
     let userName = $.message.chat.firstName
       ? $.message.chat.firstName
       : $.message.chat.lastName;
-    const user = await findUser({ telegramId: telegramId });
 
-    if (user.length) {
+    const user = await findUser({ telegramId });
+
+    if (len(user)) {
       this.nameOfUser = user[0].name;
       sendToAdmin(`User came back ${this.nameOfUser}`);
 
-      $.runInlineMenu({
-        layout: [1, 1],
-        method: "sendMessage",
-        params: [
-          `Welcome back ${
-            this.nameOfUser
-          } ${wave}. What do you want to do next?`,
-          {
-            reply_markup: JSON.stringify({
-              remove_keyboard: true
-            })
-          }
-        ],
-        menu: [
-          {
-            text: `View all todos`,
-            callback: async query => {
-              bot.api.answerCallbackQuery(query.id, {
-                text: `Okay! Here they are.`
-              });
-
-              await todos.allTodosHandler(scope);
-            }
-          },
-          {
-            text: `Add a new todo`,
-            callback: async query => {
-              bot.api.answerCallbackQuery(query.id, {
-                text: `Okay! Lets go.`
-              });
-
-              await todos.newTodoHandler(scope);
-            }
-          }
-        ]
-      });
+      $.sendMessage(`Welcome back ${this.nameOfUser}`);
 
       return;
     }
@@ -87,14 +53,12 @@ class StartController extends TelegramBaseController {
       if ($.message.text === `Yes ${thumbsUp}`) {
         sendToAdmin(`User choose Yes ${userName}`);
 
-        $.sendMessage(
-          `Okay, Thanks ${userName} ${ok}.\n\nI can help you organize your tasks by allowing you create a todolist.\n\nYou can control me with these commands:\n\n/newtodo - add a task to your todolist\n\n/mytodos - all your pending tasks\n/donetodos - all done todos\n\n/categories - manage todos in categories\n\n/help - ask for help\n/feedback - give me your feedback.`,
-          {
-            reply_markup: JSON.stringify({
-              remove_keyboard: true
-            })
-          }
-        );
+        $.sendMessage(`Okay, Thanks ${userName} ${ok}.${COMMANDS}`, {
+          reply_markup: JSON.stringify({
+            remove_keyboard: true
+          })
+        });
+
         await this.saveNewUser(userName, telegramId);
       } else if ($.message.text === `No ${thumbsDown}`) {
         $.sendMessage(`What should I then call you?`);
@@ -104,14 +68,11 @@ class StartController extends TelegramBaseController {
 
           sendToAdmin(`User choose No ${userName}`);
 
-          $.sendMessage(
-            `Okay, Thanks ${userName} ${ok}.\n\nI can help you organize your tasks by allowing you create a todolist.\n\nYou can control me with these commands:\n\n/newtodo - add a task to your todolist\n\n/mytodos - all your pending tasks\n/donetodos - all done todos\n\n/categories - manage todos in categories\n\n/help - ask for help\n/feedback - give me your feedback.`,
-            {
-              reply_markup: JSON.stringify({
-                remove_keyboard: true
-              })
-            }
-          );
+          $.sendMessage(`Okay, Thanks ${userName} ${ok}.${COMMANDS}`, {
+            reply_markup: JSON.stringify({
+              remove_keyboard: true
+            })
+          });
 
           await this.saveNewUser(userName, telegramId);
         });
@@ -128,15 +89,15 @@ class StartController extends TelegramBaseController {
 
     await addUser({
       name: userName,
-      telegramId: telegramId
+      telegramId
     });
+
     this.nameOfUser = userName;
   }
 
   get routes() {
     return {
-      startCommand: "startHandler",
-      testCommand: "testHandler"
+      startCommand: "startHandler"
     };
   }
 }

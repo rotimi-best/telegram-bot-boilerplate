@@ -16,5 +16,7 @@
     "dotenv": "^6.1.0",
     "nodemon": "^1.18.6",
     "telegram-node-bot": "^4.0.5"
+    "mongoose": "^5.3.14",
+    "mongoose-timestamp": "^0.6.0",
   }
 }

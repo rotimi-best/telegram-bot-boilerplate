@@ -1,5 +1,5 @@
 const { TextCommand } = require("telegram-node-bot");
-// const bot = require("./helpers/botConnection").get();
+const bot = require("./helpers/botConnection").get();
 
 const Start = require("./controllers/Start");
 // const CallbackQueryController = require("./callbackQueries");
